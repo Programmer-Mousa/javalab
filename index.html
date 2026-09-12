@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaLab by SAIOS — منصة اختبارات Java</title>
+<meta name="description" content="JavaLab by SAIOS Academy — منصة تدريب واختبار متخصصة في لغة Java، بمستويين ومئات الأسئلة الحقيقية.">
+
+<!-- Google Fonts: Cairo (Arabic UI) + JetBrains Mono (code) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Font Awesome (icons). If this CDN is unreachable, layout still works — icons simply won't render. -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <button class="brand" id="brandLogo" aria-label="JavaLab home">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M7.5 8.5L4.5 12L7.5 15.5" stroke="#7CFF4F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16.5 8.5L19.5 12L16.5 15.5" stroke="#A4FF6A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M13.5 6.5L10.5 17.5" stroke="#EAF7EE" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="brand-text">
+        <span class="brand-title">JavaLab</span>
+        <span class="brand-sub">by SAIOS Academy</span>
+      </span>
+    </button>
+
+    <nav class="main-nav" aria-label="Primary">
+      <button class="nav-link" data-nav="home">الرئيسية</button>
+      <button class="nav-link" data-nav="levels">المواضيع</button>
+      <button class="nav-link" data-nav="dashboard">تقدمي</button>
+      <button class="nav-link" data-nav="about">عن المنصة</button>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false">
+        <i class="fa-solid fa-bars" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+
+  <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+    <button class="nav-link" data-nav="home">الرئيسية</button>
+    <button class="nav-link" data-nav="levels">المواضيع</button>
+    <button class="nav-link" data-nav="dashboard">تقدمي</button>
+    <button class="nav-link" data-nav="about">عن المنصة</button>
+  </nav>
+</header>
+
+<main id="app" role="main"></main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-brand">JavaLab by SAIOS Academy</div>
+    <div class="footer-tagline">منصة تدريب واختبار متخصصة في Java</div>
+    <div class="footer-copy">© 2026 SAIOS Academy</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
