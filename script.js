@@ -10,17 +10,63 @@
      Application State
      ------------------------------------------------------------------ */
   const state = {
-    view: "home",          // home | levels | topics | quiz | result | review | dashboard | about
+    view: "home",          // home | levels | topics | practical | practicalChallenge | quiz | result | review | dashboard | about
     currentLevel: null,    // "level1" | "level2"
     currentTopicKey: null,
     currentQuestionIndex: 0,
     selectedAnswers: [],   // original option index chosen per question, or null
     optionOrders: [],       // display index -> original option index for each question
     answerLocked: false,   // prevents double-click on current question
-    quizFinished: false
+    quizFinished: false,
+    currentPracticalIndex: 0
   };
 
   const STORAGE_KEY = "javalab_progress_v1";
+
+
+  /* ------------------------------------------------------------------
+     Practical Lab — project-based challenges for each Java level.
+     The platform is intentionally static: students write code locally in
+     the built-in editor, use hints/reference solutions, then mark a
+     challenge complete. Progress and drafts are stored on the device.
+     ------------------------------------------------------------------ */
+  const practicalLabs = {
+    level1: [
+      {title:"Student Grade Calculator", difficulty:"Beginner", concepts:"Scanner · Variables · if / else", brief:"اكتب برنامجًا يقرأ درجات ثلاث مواد، يحسب المعدل، ثم يطبع التقدير المناسب.", req:["استخدم Scanner لقراءة الدرجات","احسب المتوسط الحسابي","استخدم if / else لتحديد التقدير"], hint:"ابدأ بتعريف ثلاث متغيرات للدرجات، ثم احسب average قبل كتابة شروط التقدير.", starter:"import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        // اكتب الحل هنا\n    }\n}", solution:"import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner input = new Scanner(System.in);\n        double a = input.nextDouble();\n        double b = input.nextDouble();\n        double c = input.nextDouble();\n        double avg = (a + b + c) / 3;\n        if (avg >= 90) System.out.println(\"A\");\n        else if (avg >= 80) System.out.println(\"B\");\n        else if (avg >= 70) System.out.println(\"C\");\n        else System.out.println(\"Needs Improvement\");\n    }\n}"},
+      {title:"Even or Odd", difficulty:"Beginner", concepts:"Input · Operators · Conditions", brief:"اقرأ رقمًا صحيحًا وحدد هل هو زوجي أم فردي.", req:["اقرأ الرقم من المستخدم","استخدم معامل %","اطبع النتيجة بوضوح"], hint:"إذا كان باقي قسمة الرقم على 2 يساوي صفرًا فالرقم زوجي.", starter:"import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        // الحل\n    }\n}", solution:"Scanner input = new Scanner(System.in);\nint n = input.nextInt();\nSystem.out.println(n % 2 == 0 ? \"Even\" : \"Odd\");"},
+      {title:"Simple Calculator", difficulty:"Beginner", concepts:"Scanner · Operators · switch", brief:"أنشئ آلة حاسبة تدعم الجمع والطرح والضرب والقسمة بين رقمين.", req:["اقرأ رقمين","اقرأ العملية","استخدم switch أو if","تعامل مع القسمة على صفر"], hint:"اجعل العملية String أو char ثم نفّذ الفرع المناسب.", starter:"import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        // number1, operator, number2\n    }\n}", solution:"Scanner in = new Scanner(System.in);\ndouble a = in.nextDouble();\nchar op = in.next().charAt(0);\ndouble b = in.nextDouble();\nswitch (op) {\n    case '+': System.out.println(a + b); break;\n    case '-': System.out.println(a - b); break;\n    case '*': System.out.println(a * b); break;\n    case '/': System.out.println(b != 0 ? a / b : \"Cannot divide by zero\"); break;\n    default: System.out.println(\"Invalid operator\");\n}"},
+      {title:"Multiplication Table", difficulty:"Beginner", concepts:"Loops · Variables · Output", brief:"اطبع جدول ضرب رقم يختاره المستخدم من 1 إلى 10.", req:["استخدم Scanner","استخدم for loop","اطبع الناتج بالشكل n × i = result"], hint:"اجعل i تبدأ من 1 وتنتهي عند 10.", starter:"import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        // الحل\n    }\n}", solution:"Scanner in = new Scanner(System.in);\nint n = in.nextInt();\nfor (int i = 1; i <= 10; i++) {\n    System.out.println(n + \" x \" + i + \" = \" + (n * i));\n}"},
+      {title:"Number Analyzer", difficulty:"Beginner", concepts:"Conditions · Math", brief:"اقرأ رقمًا وحدد هل هو موجب أو سالب أو صفر، وهل هو زوجي أو فردي.", req:["استخدم if / else","استخدم % لتحديد الزوجي والفردي","اطبع وصفًا واضحًا"], hint:"قسّم المهمة إلى فحص الإشارة ثم فحص الزوجية.", starter:"public class Main {\n    public static void main(String[] args) {\n        int n = 0;\n        // الحل\n    }\n}", solution:"if (n > 0) System.out.println(\"Positive\");\nelse if (n < 0) System.out.println(\"Negative\");\nelse System.out.println(\"Zero\");\nSystem.out.println(n % 2 == 0 ? \"Even\" : \"Odd\");"},
+      {title:"Countdown Timer", difficulty:"Beginner", concepts:"for loop · Arithmetic", brief:"اطبع عدًّا تنازليًا من رقم يدخله المستخدم حتى 1 ثم اطبع Start!.", req:["استخدم for","تناقص بمقدار واحد","اطبع رسالة النهاية"], hint:"ابدأ i من الرقم المدخل واجعل شرط الحلقة i >= 1.", starter:"import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        // الحل\n    }\n}", solution:"Scanner in = new Scanner(System.in);\nint n = in.nextInt();\nfor (int i = n; i >= 1; i--) System.out.println(i);\nSystem.out.println(\"Start!\");"},
+      {title:"Sum from 1 to N", difficulty:"Beginner", concepts:"Loops · Accumulator", brief:"احسب مجموع الأعداد من 1 حتى N.", req:["استخدم متغير sum","استخدم loop","اطبع المجموع النهائي"], hint:"ابدأ sum = 0 ثم أضف i في كل دورة.", starter:"import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        // الحل\n    }\n}", solution:"Scanner in = new Scanner(System.in);\nint n = in.nextInt();\nint sum = 0;\nfor (int i = 1; i <= n; i++) sum += i;\nSystem.out.println(sum);"},
+      {title:"Find the Largest", difficulty:"Beginner", concepts:"Variables · Conditions", brief:"اقرأ ثلاثة أرقام وحدد أكبر قيمة بينها.", req:["اقرأ 3 أرقام","استخدم if / else أو Math.max","اطبع الأكبر"], hint:"يمكنك الاحتفاظ بأكبر قيمة حاليًا داخل متغير max.", starter:"public class Main {\n    public static void main(String[] args) {\n        int a = 0, b = 0, c = 0;\n        // الحل\n    }\n}", solution:"int max = Math.max(a, Math.max(b, c));\nSystem.out.println(max);"},
+      {title:"Array Average", difficulty:"Intermediate", concepts:"Arrays · Loops", brief:"أنشئ مصفوفة درجات واحسب مجموعها ومتوسطها وأعلى درجة.", req:["استخدم int[] أو double[]","مرّ على العناصر بحلقة","احسب average و max"], hint:"استخدم enhanced for loop لتسهيل المرور على المصفوفة.", starter:"public class Main {\n    public static void main(String[] args) {\n        int[] grades = {85, 92, 74, 88, 95};\n        // الحل\n    }\n}", solution:"int sum = 0;\nint max = grades[0];\nfor (int grade : grades) {\n    sum += grade;\n    if (grade > max) max = grade;\n}\ndouble avg = (double) sum / grades.length;\nSystem.out.println(\"Average: \" + avg);\nSystem.out.println(\"Max: \" + max);"},
+      {title:"Reverse an Array", difficulty:"Intermediate", concepts:"Arrays · Loops", brief:"اطبع عناصر مصفوفة من آخر عنصر إلى أول عنصر.", req:["استخدم array","استخدم loop عكسي","لا تنشئ مصفوفة ثانية"], hint:"ابدأ من length - 1 وانقص i حتى 0.", starter:"public class Main {\n    public static void main(String[] args) {\n        int[] values = {10, 20, 30, 40, 50};\n        // الحل\n    }\n}", solution:"for (int i = values.length - 1; i >= 0; i--) {\n    System.out.println(values[i]);\n}"},
+      {title:"Palindrome String", difficulty:"Intermediate", concepts:"Strings · Loops", brief:"تحقق هل الكلمة Palindrome، أي تقرأ نفسها من اليمين واليسار.", req:["استخدم String","قارن الأحرف من الطرفين","اطبع true أو false"], hint:"قارن charAt(i) مع charAt(length - 1 - i).", starter:"public class Main {\n    public static void main(String[] args) {\n        String word = \"level\";\n        // الحل\n    }\n}", solution:"boolean palindrome = true;\nfor (int i = 0; i < word.length() / 2; i++) {\n    if (word.charAt(i) != word.charAt(word.length() - 1 - i)) {\n        palindrome = false;\n        break;\n    }\n}\nSystem.out.println(palindrome);"},
+      {title:"Method-Based Calculator", difficulty:"Intermediate", concepts:"Methods · Parameters · return", brief:"قسّم آلة حاسبة بسيطة إلى methods مستقلة للجمع والطرح والضرب والقسمة.", req:["أنشئ method لكل عملية","استخدم parameters","أعد النتيجة باستخدام return"], hint:"ابدأ بـ static double add(double a, double b).", starter:"public class Main {\n    // أنشئ methods هنا\n\n    public static void main(String[] args) {\n        // جرّب methods\n    }\n}", solution:"static double add(double a, double b) { return a + b; }\nstatic double subtract(double a, double b) { return a - b; }\nstatic double multiply(double a, double b) { return a * b; }\nstatic double divide(double a, double b) { return b == 0 ? 0 : a / b; }"},
+      {title:"Student Report", difficulty:"Intermediate", concepts:"Arrays · Methods · Conditions", brief:"أنشئ برنامجًا يطبع تقرير طالب من درجاته ويحدد حالة النجاح.", req:["استخدم array للدرجات","استخدم method لحساب المتوسط","حدد Pass / Fail"], hint:"اجعل calculateAverage مسؤولة عن الحساب فقط، واترك الطباعة لـ main.", starter:"public class Main {\n    static double calculateAverage(int[] grades) {\n        // الحل\n        return 0;\n    }\n\n    public static void main(String[] args) {\n        int[] grades = {80, 72, 91, 88};\n    }\n}", solution:"static double calculateAverage(int[] grades) {\n    int sum = 0;\n    for (int g : grades) sum += g;\n    return (double) sum / grades.length;\n}"},
+      {title:"Mini Menu Program", difficulty:"Intermediate", concepts:"switch · loops · input", brief:"أنشئ قائمة تتكرر حتى يختار المستخدم Exit، مع خيارات مثل عرض رسالة وحساب مربع رقم.", req:["استخدم while loop","استخدم switch","وفّر خيار Exit"], hint:"ضع قراءة الخيار داخل while ثم اكسر الحلقة عند اختيار 0.", starter:"import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner in = new Scanner(System.in);\n        // ابنِ القائمة هنا\n    }\n}", solution:"int choice;\ndo {\n    System.out.println(\"1. Hello  2. Square  0. Exit\");\n    choice = in.nextInt();\n    switch (choice) {\n        case 1: System.out.println(\"Hello Java\"); break;\n        case 2: int n = in.nextInt(); System.out.println(n * n); break;\n        case 0: System.out.println(\"Goodbye\"); break;\n        default: System.out.println(\"Invalid choice\");\n    }\n} while (choice != 0);"},
+      {title:"Final Challenge — Student Manager", difficulty:"Advanced", concepts:"Arrays · Methods · Input · Conditions · Loops", brief:"ابنِ برنامجًا صغيرًا لإدارة طلاب: إضافة اسم ودرجة، عرض الطلاب، البحث عن أعلى درجة، وإنهاء البرنامج.", req:["استخدم arrays أو parallel arrays","قسّم الحل إلى methods","استخدم loop + switch/conditions","وفّر قائمة تفاعلية"], hint:"قسّم المشروع إلى addStudent وshowStudents وfindTopStudent بدل كتابة كل شيء داخل main.", starter:"import java.util.Scanner;\n\npublic class Main {\n    // صمّم برنامجك هنا\n}", solution:"مرجع الحل: قسّم البرنامج إلى قائمة Menu، ومصفوفات names/grades، وmethods مستقلة لكل عملية. ركّز على وضوح الكود قبل تقليل عدد الأسطر."}
+    ],
+    level2: [
+      {title:"BankAccount Class", difficulty:"Beginner", concepts:"Class · Object · Constructor", brief:"أنشئ BankAccount يحتوي accountNumber وbalance وعمليات deposit وwithdraw ثم اختبره من main.", req:["أنشئ class مستقل","استخدم constructor","أنشئ object في main","نفّذ deposit وwithdraw"], hint:"ابدأ بالحقول ثم constructor، وبعدها اجعل العمليات methods داخل الكلاس.", starter:"class BankAccount {\n    // fields + constructor + methods\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        // create object\n    }\n}", solution:"class BankAccount {\n    private String accountNumber;\n    private double balance;\n    BankAccount(String number, double balance) { this.accountNumber = number; this.balance = balance; }\n    void deposit(double amount) { if (amount > 0) balance += amount; }\n    boolean withdraw(double amount) { if (amount <= balance) { balance -= amount; return true; } return false; }\n    double getBalance() { return balance; }\n}"},
+      {title:"Constructor Practice", difficulty:"Beginner", concepts:"Constructors · this", brief:"أنشئ Student class بثلاثة constructors مختلفة واستخدم this لتهيئة الخصائص.", req:["Default constructor","Parameterized constructor","Constructor overloading","استخدم this"], hint:"اجعل constructor بدون parameters يستدعي constructor آخر بقيم افتراضية.", starter:"class Student {\n    String name;\n    int age;\n\n    // constructors\n}", solution:"Student() { this(\"Unknown\", 0); }\nStudent(String name, int age) { this.name = name; this.age = age; }\nStudent(String name) { this(name, 18); }"},
+      {title:"Encapsulated Product", difficulty:"Beginner", concepts:"Encapsulation · getters · setters", brief:"أنشئ Product بخصائص private وسعر لا يسمح بقيمة سالبة.", req:["اجعل fields private","أنشئ getter/setter","تحقق من السعر داخل setter"], hint:"لا تعدّل price مباشرة من خارج الكلاس.", starter:"class Product {\n    private String name;\n    private double price;\n    // getters/setters\n}", solution:"public double getPrice() { return price; }\npublic void setPrice(double price) { if (price >= 0) this.price = price; }"},
+      {title:"Library Inheritance", difficulty:"Intermediate", concepts:"Inheritance · extends · super", brief:"أنشئ Item ثم Book وMagazine يرثان منه، مع خصائص مشتركة وسلوك خاص.", req:["أنشئ superclass","استخدم extends","استخدم super في constructor","أضف field خاص بالابن"], hint:"ضع id/title في Item، وpageCount داخل Book.", starter:"class Item {\n    // common fields\n}\nclass Book extends Item {\n    // book-specific fields\n}", solution:"class Item { String title; Item(String title){ this.title = title; } }\nclass Book extends Item { int pages; Book(String title, int pages){ super(title); this.pages = pages; } }"},
+      {title:"Employee Hierarchy", difficulty:"Intermediate", concepts:"Inheritance · overriding", brief:"أنشئ Employee ثم Developer وDesigner مع method calculateSalary تختلف حسب النوع.", req:["استخدم inheritance","Override method","اختبر أكثر من subclass"], hint:"اجعل Employee يحتوي salary أساسيًا، والـsubclasses تضيف bonus مختلفًا.", starter:"class Employee {\n    double calculateSalary() { return 0; }\n}\n// subclasses", solution:"class Employee { double base; Employee(double base){this.base=base;} double calculateSalary(){return base;} }\nclass Developer extends Employee { Developer(double b){super(b);} @Override double calculateSalary(){return base+500;} }"},
+      {title:"Shape Polymorphism", difficulty:"Intermediate", concepts:"Polymorphism · overriding", brief:"أنشئ Shape ثم Circle وRectangle، واستخدم مرجع Shape لحساب المساحة لكل شكل.", req:["أنشئ method area","Override في subclasses","استخدم Shape[] أو List<Shape>"], hint:"تعدد الأشكال يظهر عندما تستدعي area عبر مرجع من النوع Shape.", starter:"abstract class Shape {\n    abstract double area();\n}\n// Circle + Rectangle", solution:"Shape[] shapes = { new Circle(3), new Rectangle(4, 5) };\nfor (Shape s : shapes) System.out.println(s.area());"},
+      {title:"Abstract Payment System", difficulty:"Intermediate", concepts:"Abstraction · abstract class", brief:"صمّم Payment abstract class وطرق دفع CardPayment وCashPayment مع processPayment.", req:["abstract class","abstract method","subclasses","اختبر polymorphism"], hint:"اجعل processPayment abstract ثم نفّذه في كل نوع دفع.", starter:"abstract class Payment {\n    abstract void processPayment(double amount);\n}\n// implementations", solution:"class CardPayment extends Payment { void processPayment(double amount){ System.out.println(\"Card: \"+amount); } }\nclass CashPayment extends Payment { void processPayment(double amount){ System.out.println(\"Cash: \"+amount); } }"},
+      {title:"Notification Interface", difficulty:"Intermediate", concepts:"Interfaces · implementation", brief:"أنشئ Notification interface ثم EmailNotification وSMSNotification لتطبيق send().", req:["interface","implements","method implementation","استخدم مرجع interface"], hint:"يمكن لمتغير من نوع Notification أن يشير إلى Email أو SMS.", starter:"interface Notification {\n    void send(String message);\n}\n// implementations", solution:"class EmailNotification implements Notification { public void send(String m){ System.out.println(\"Email: \"+m); } }\nclass SMSNotification implements Notification { public void send(String m){ System.out.println(\"SMS: \"+m); } }"},
+      {title:"Safe Division", difficulty:"Intermediate", concepts:"Exceptions · try/catch", brief:"أنشئ برنامج قسمة يتعامل مع ArithmeticException وInputMismatchException بطريقة مناسبة.", req:["try/catch","رسالة خطأ مفهومة","استمر في البرنامج إن أمكن"], hint:"ضع العمليات التي قد تفشل داخل try، وكل Exception مناسب في catch منفصل.", starter:"import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        // safe input + division\n    }\n}", solution:"try {\n    Scanner in = new Scanner(System.in);\n    int a = in.nextInt();\n    int b = in.nextInt();\n    System.out.println(a / b);\n} catch (ArithmeticException e) {\n    System.out.println(\"Cannot divide by zero\");\n} catch (InputMismatchException e) {\n    System.out.println(\"Please enter integers\");\n}"},
+      {title:"List Manager", difficulty:"Intermediate", concepts:"Collections · List · iteration", brief:"استخدم ArrayList لإضافة أسماء طلاب، حذف اسم، ثم عرض القائمة مرتبة.", req:["ArrayList","add/remove","for-each","sort"], hint:"استورد java.util.ArrayList وjava.util.Collections.", starter:"import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        ArrayList<String> students = new ArrayList<>();\n        // الحل\n    }\n}", solution:"students.add(\"Mousa\");\nstudents.add(\"Sara\");\nstudents.remove(\"Sara\");\nCollections.sort(students);\nfor (String s : students) System.out.println(s);"},
+      {title:"ArrayList Grade Tracker", difficulty:"Intermediate", concepts:"ArrayList · loops · statistics", brief:"خزّن درجات متغيرة العدد داخل ArrayList واحسب المتوسط وأعلى وأدنى درجة.", req:["ArrayList<Integer>","loop","average/max/min"], hint:"استخدم get(i) أو enhanced for loop للمرور على العناصر.", starter:"import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        ArrayList<Integer> grades = new ArrayList<>();\n        // أضف درجات واكتب الحسابات\n    }\n}", solution:"int sum = 0, max = grades.get(0), min = grades.get(0);\nfor (int g : grades) { sum += g; max = Math.max(max, g); min = Math.min(min, g); }\ndouble avg = (double) sum / grades.size();"},
+      {title:"HashMap Contact Book", difficulty:"Advanced", concepts:"HashMap · key/value · lookup", brief:"أنشئ دفتر جهات اتصال باستخدام HashMap يربط الاسم برقم الهاتف.", req:["HashMap<String,String>","put/get/remove","تحقق من وجود key"], hint:"استخدم containsKey قبل الوصول إذا أردت رسالة مختلفة عند عدم وجود الاسم.", starter:"import java.util.*;\npublic class Main {\n    public static void main(String[] args) {\n        HashMap<String,String> contacts = new HashMap<>();\n        // الحل\n    }\n}", solution:"contacts.put(\"Mousa\", \"0590000000\");\nString phone = contacts.get(\"Mousa\");\nif (contacts.containsKey(\"Mousa\")) System.out.println(phone);"},
+      {title:"Generic Box", difficulty:"Advanced", concepts:"Generics · type safety", brief:"أنشئ Generic class Box<T> تخزن قيمة وتعيدها، ثم استخدمها مع String وInteger.", req:["class Box<T>","private field","set/get","اختبر نوعين مختلفين"], hint:"اجعل نوع القيمة T بدل Object لتحتفظ بالـtype safety.", starter:"class Box<T> {\n    private T value;\n    // constructor + set/get\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        // test String + Integer\n    }\n}", solution:"class Box<T> {\n    private T value;\n    Box(T value){ this.value = value; }\n    T get(){ return value; }\n    void set(T value){ this.value = value; }\n}\nBox<String> text = new Box<>(\"Java\");\nBox<Integer> number = new Box<>(42);"},
+      {title:"Generic Utility Method", difficulty:"Advanced", concepts:"Generic methods · arrays", brief:"أنشئ method generic تعيد أول عنصر من Array أو List مع الحفاظ على النوع.", req:["Generic method <T>","parameter من النوع T[] أو List<T>","return T"], hint:"الصيغة الأساسية: static <T> T first(T[] values).", starter:"public class Main {\n    static <T> T first(T[] values) {\n        // الحل\n        return null;\n    }\n}", solution:"static <T> T first(T[] values) { return values[0]; }\nString[] names = {\"A\", \"B\"};\nInteger[] nums = {1, 2};"},
+      {title:"Mini OOP Store", difficulty:"Advanced", concepts:"Encapsulation · inheritance · polymorphism", brief:"ابنِ نظام متجر صغير فيه Product أساسي وBookProduct وDigitalProduct، مع حساب السعر النهائي بشكل polymorphic.", req:["base class + subclasses","private fields","override method","استخدم List<Product>"], hint:"اجعل finalPrice() method في Product ثم غيّر سلوكها في الأنواع الفرعية.", starter:"class Product {\n    // design your model\n}\n// BookProduct + DigitalProduct\n\npublic class Main {\n    public static void main(String[] args) {\n        // test products\n    }\n}", solution:"صمّم Product بخصائص private وmethod finalPrice(). اجعل BookProduct يضيف shipping، وDigitalProduct يضيف download fee أو discount، ثم خزّن الجميع في List<Product> واستدعِ finalPrice() عبر polymorphism."},
+      {title:"Final Challenge — Library Management", difficulty:"Advanced", concepts:"OOP · Collections · Interfaces · Exceptions", brief:"ابنِ نظام مكتبة مصغر يدير الكتب والأعضاء وعمليات الاستعارة والإرجاع باستخدام OOP وCollections.", req:["Book + Member classes","Encapsulation","ArrayList أو HashMap","Interface أو abstraction لعملية الإعارة","تعامل مع حالات الخطأ"], hint:"ابدأ بتصميم الـclasses والعلاقات قبل كتابة menu. لا تضع كل المنطق داخل main.", starter:"import java.util.*;\n\npublic class Main {\n    // صمّم نظام المكتبة هنا\n}", solution:"مرجع الحل: أنشئ Book وMember وLibrary، استخدم Collections للتخزين، افصل عمليات borrow/return داخل Library، وعرّف استثناءات أو رسائل واضحة للحالات غير الصالحة. الهدف هو بناء تصميم OOP منظم وليس تقليل عدد الأسطر."}
+    ]
+  };
 
   /* ------------------------------------------------------------------
      Storage helpers (localStorage) — safe wrappers, never throw out
@@ -195,8 +241,54 @@
       { icon: "fa-solid fa-fire", title: "ثلاثة أيام", desc: "حافظ على Streak لمدة 3 أيام", unlocked: progress.streak >= 3 },
       { icon: "fa-solid fa-layer-group", title: "مستكشف Java", desc: "أكمل 5 مواضيع", unlocked: completedTopics >= 5 },
       { icon: "fa-solid fa-medal", title: "ملتزم بالتعلم", desc: "أكمل 10 اختبارات", unlocked: totalAttempts >= 10 },
-      { icon: "fa-solid fa-crown", title: "Master Level", desc: "أكمل جميع المواضيع", unlocked: completedTopics >= allTopics }
+      { icon: "fa-solid fa-crown", title: "Master Level", desc: "أكمل جميع المواضيع", unlocked: completedTopics >= allTopics },
+      { icon: "fa-solid fa-flask-vial", title: "أول تحدي عملي", desc: "أكمل أول Practical Challenge", unlocked: getAllPracticalCompleted() >= 1 },
+      { icon: "fa-solid fa-laptop-code", title: "Practical Builder", desc: "أكمل 10 تحديات عملية", unlocked: getAllPracticalCompleted() >= 10 },
+      { icon: "fa-solid fa-rocket", title: "Lab Master", desc: "أكمل جميع التحديات العملية", unlocked: getAllPracticalCompleted() >= (getPracticalLab("level1").length + getPracticalLab("level2").length) }
     ];
+  }
+
+
+  function getPracticalLab(levelKey) { return practicalLabs[levelKey] || []; }
+
+  function getPracticalProgress(levelKey) {
+    const progress = loadProgress();
+    const lab = getPracticalLab(levelKey);
+    const done = lab.filter(function (_, i) { return progress.practical && progress.practical[levelKey + ":" + i] && progress.practical[levelKey + ":" + i].completed; }).length;
+    return { completed: done, total: lab.length, percent: lab.length ? Math.round((done / lab.length) * 100) : 0 };
+  }
+
+  function getAllPracticalCompleted() {
+    return getPracticalProgress("level1").completed + getPracticalProgress("level2").completed;
+  }
+
+  function savePracticalDraft(levelKey, index, code) {
+    const progress = loadProgress();
+    progress.practicalDrafts = progress.practicalDrafts || {};
+    progress.practicalDrafts[levelKey + ":" + index] = code;
+    saveProgress(progress);
+  }
+
+  function getPracticalDraft(levelKey, index, fallback) {
+    const progress = loadProgress();
+    return (progress.practicalDrafts && progress.practicalDrafts[levelKey + ":" + index]) || fallback;
+  }
+
+  function completePractical(levelKey, index) {
+    const progress = getProgressData();
+    progress.practical = progress.practical || {};
+    const id = levelKey + ":" + index;
+    if (progress.practical[id] && progress.practical[id].completed) {
+      showToast("هذا التحدي مكتمل بالفعل ✓");
+      return;
+    }
+    progress.practical[id] = { completed: true, date: new Date().toISOString() };
+    progress.xp += 50;
+    updateStreak(progress);
+    progress.lastPractical = id;
+    saveProgress(progress);
+    showToast("أحسنت! +50 XP — تم إكمال التحدي 🏆");
+    renderPracticalLab();
   }
 
   /* ------------------------------------------------------------------
@@ -234,7 +326,9 @@
 
   function countLevelQuestions(levelKey) {
     const topics = quizData[levelKey].topics;
-    return Object.keys(topics).length * 10;
+    return Object.keys(topics).reduce(function (sum, key) {
+      return sum + topics[key].questions.length;
+    }, 0);
   }
 
   /* ------------------------------------------------------------------
@@ -366,6 +460,8 @@
       case "home": app.innerHTML = renderHome(); attachHomeEvents(); break;
       case "levels": app.innerHTML = renderLevels(); attachLevelsEvents(); break;
       case "topics": app.innerHTML = renderTopics(); attachTopicsEvents(); break;
+      case "practical": app.innerHTML = renderPracticalLab(); attachPracticalLabEvents(); break;
+      case "practicalChallenge": app.innerHTML = renderPracticalChallenge(); attachPracticalChallengeEvents(); break;
       case "quiz": app.innerHTML = renderQuiz(); attachQuizEvents(); break;
       case "result": app.innerHTML = renderResult(); attachResultEvents(); break;
       case "review": app.innerHTML = renderReview(); attachReviewEvents(); break;
@@ -380,7 +476,7 @@
       const target = link.getAttribute("data-nav");
       const isActive =
         (target === "home" && state.view === "home") ||
-        (target === "levels" && (state.view === "levels" || state.view === "topics" || state.view === "quiz" || state.view === "result" || state.view === "review")) ||
+        (target === "levels" && (state.view === "levels" || state.view === "topics" || state.view === "practical" || state.view === "practicalChallenge" || state.view === "quiz" || state.view === "result" || state.view === "review")) ||
         (target === "dashboard" && state.view === "dashboard") ||
         (target === "about" && state.view === "about");
       link.classList.toggle("active", isActive);
@@ -465,7 +561,9 @@
 
   function levelCard(levelKey, tag, title, desc, progress, isLevel2) {
     const topicCount = Object.keys(quizData[levelKey].topics).length;
-    const questionCount = topicCount * 10;
+    const questionCount = Object.keys(quizData[levelKey].topics).reduce(function (sum, key) {
+      return sum + quizData[levelKey].topics[key].questions.length;
+    }, 0);
     return (
       '<button class="level-card' + (isLevel2 ? " level-2" : "") + '" data-action="open-level" data-level="' + levelKey + '">' +
         '<span class="level-tag">' + tag + '</span>' +
@@ -527,7 +625,7 @@
           '<div class="topic-icon"><i class="' + escapeHtml(topic.icon || "fa-solid fa-code") + '" aria-hidden="true"></i></div>' +
           '<div class="topic-heading-row"><h4>' + escapeHtml(topic.title) + '</h4><span class="difficulty-badge"><i class="fa-solid ' + difficultyIcon + '" aria-hidden="true"></i> ' + difficulty + '</span></div>' +
           '<div class="topic-meta">' +
-            '<span><i class="fa-solid fa-circle-question" aria-hidden="true"></i> 10 أسئلة</span>' +
+            '<span><i class="fa-solid fa-circle-question" aria-hidden="true"></i> 20 سؤال</span>' +
             '<span><i class="fa-solid fa-trophy" aria-hidden="true"></i> أفضل نتيجة: ' + bestLabel + '</span>' +
           '</div>' +
           '<button class="btn btn-primary btn-block" data-action="start-quiz" data-topic="' + key + '">ابدأ الاختبار</button>' +
@@ -535,16 +633,26 @@
       );
     }).join("");
 
+    const labProgress = getPracticalProgress(levelKey);
+    const practicalCard = '<article class="topic-card practical-lab-card">' +
+      '<div class="topic-icon practical-icon"><i class="fa-solid fa-flask-vial" aria-hidden="true"></i></div>' +
+      '<div class="topic-heading-row"><h4>Practical Lab</h4><span class="difficulty-badge lab-badge"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i> تطبيق عملي</span></div>' +
+      '<p class="practical-card-copy">تحديات ومشاريع عملية تحوّل ما تعلمته إلى كود حقيقي.</p>' +
+      '<div class="topic-meta"><span><i class="fa-solid fa-laptop-code" aria-hidden="true"></i> ' + labProgress.total + ' تحديًا</span><span><i class="fa-solid fa-check-circle" aria-hidden="true"></i> ' + labProgress.completed + ' مكتمل</span></div>' +
+      '<div class="progress-track"><div class="progress-fill" style="width:' + labProgress.percent + '%"></div></div>' +
+      '<button class="btn btn-primary btn-block" data-action="open-practical">افتح المختبر</button>' +
+      '</article>';
+
     return (
       '<div class="view-header container">' +
         '<h1>' + escapeHtml(level.title) + '</h1>' +
-        '<p>' + escapeHtml(level.subtitle) + ' — اختر موضوعًا لبدء اختبار من 10 أسئلة</p>' +
+        '<p>' + escapeHtml(level.subtitle) + ' — اختر موضوعًا لبدء اختبار من 20 سؤالًا</p>' +
       '</div>' +
       '<div class="section container">' +
         '<div class="topics-toolbar">' +
           '<button class="btn btn-ghost" data-action="back-levels"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i> العودة للمستويات</button>' +
         '</div>' +
-        '<div class="topic-grid">' + cards + '</div>' +
+        '<div class="topic-grid">' + cards + practicalCard + '</div>' +
       '</div>'
     );
   }
@@ -556,6 +664,72 @@
         navigate("quiz", { level: state.currentLevel, topic: btn.getAttribute("data-topic"), startNew: true });
       });
     });
+    const labBtn = qs('[data-action="open-practical"]');
+    if (labBtn) labBtn.addEventListener("click", function () { navigate("practical", { level: state.currentLevel }); });
+  }
+
+
+  /* ------------------------------------------------------------------
+     View: Practical Lab
+     ------------------------------------------------------------------ */
+  function renderPracticalLab() {
+    const levelKey = state.currentLevel || "level1";
+    const lab = getPracticalLab(levelKey);
+    const progress = getPracticalProgress(levelKey);
+    const cards = lab.map(function (c, i) {
+      const p = loadProgress();
+      const done = !!(p.practical && p.practical[levelKey + ":" + i] && p.practical[levelKey + ":" + i].completed);
+      const difficultyClass = c.difficulty.toLowerCase();
+      return '<article class="challenge-card ' + (done ? 'is-complete' : '') + '">' +
+        '<div class="challenge-top"><span class="challenge-number">Challenge ' + String(i + 1).padStart(2, "0") + '</span><span class="challenge-difficulty ' + difficultyClass + '">' + escapeHtml(c.difficulty) + '</span></div>' +
+        '<div class="challenge-icon"><i class="fa-solid ' + (done ? 'fa-circle-check' : 'fa-laptop-code') + '" aria-hidden="true"></i></div>' +
+        '<h3>' + escapeHtml(c.title) + '</h3><p>' + escapeHtml(c.brief) + '</p>' +
+        '<div class="challenge-concepts">' + escapeHtml(c.concepts) + '</div>' +
+        '<button class="btn ' + (done ? 'btn-ghost' : 'btn-primary') + ' btn-block" data-practical-index="' + i + '">' + (done ? 'مراجعة التحدي ✓' : 'ابدأ التحدي') + '</button>' +
+      '</article>';
+    }).join("");
+    return '<div class="view-header container"><h1>🛠️ Practical Lab</h1><p>طبّق ما تعلمته من ' + escapeHtml(quizData[levelKey].title) + ' في تحديات ومشاريع عملية.</p></div>' +
+      '<div class="section container"><div class="practical-hero"><div><span class="eyebrow">LEARN → PRACTICE → MASTER</span><h2>حوّل المعرفة إلى كود حقيقي.</h2><p>اكتب الحل بنفسك، استخدم الـHints عند الحاجة، ثم راجع Reference Solution وسجّل إنجازك.</p></div><div class="practical-progress"><strong>' + progress.completed + ' / ' + progress.total + '</strong><span>تحديات مكتملة</span><div class="progress-track"><div class="progress-fill" style="width:' + progress.percent + '%"></div></div><small>' + progress.percent + '% من المختبر</small></div></div>' +
+      '<div class="topics-toolbar"><button class="btn btn-ghost" data-action="back-topics"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i> العودة للمواضيع</button><span class="lab-note"><i class="fa-solid fa-circle-info"></i> التحديات تعتمد على التطبيق الذاتي</span></div>' +
+      '<div class="challenge-grid">' + cards + '</div></div>';
+  }
+  function attachPracticalLabEvents() {
+    const back = qs('[data-action="back-topics"]');
+    if (back) back.addEventListener("click", function(){ navigate("topics", {level: state.currentLevel}); });
+    qsa('[data-practical-index]').forEach(function(btn){ btn.addEventListener("click", function(){ state.currentPracticalIndex = Number(btn.getAttribute("data-practical-index")); navigate("practicalChallenge", {level: state.currentLevel}); }); });
+  }
+
+  function renderPracticalChallenge() {
+    const levelKey = state.currentLevel || "level1";
+    const i = state.currentPracticalIndex || 0;
+    const c = getPracticalLab(levelKey)[i];
+    if (!c) return renderPracticalLab();
+    const progress = loadProgress();
+    const done = !!(progress.practical && progress.practical[levelKey + ":" + i] && progress.practical[levelKey + ":" + i].completed);
+    const draft = getPracticalDraft(levelKey, i, c.starter);
+    return '<div class="section container practical-detail">' +
+      '<div class="practical-detail-top"><button class="btn btn-ghost" id="btnBackLab"><i class="fa-solid fa-arrow-right"></i> Practical Lab</button><span>Challenge ' + String(i+1).padStart(2,"0") + ' / ' + getPracticalLab(levelKey).length + '</span></div>' +
+      '<div class="challenge-detail-head"><div><span class="challenge-difficulty ' + c.difficulty.toLowerCase() + '">' + escapeHtml(c.difficulty) + '</span><h1>' + escapeHtml(c.title) + '</h1><p>' + escapeHtml(c.brief) + '</p></div><div class="challenge-xp"><i class="fa-solid fa-bolt"></i><strong>+50 XP</strong><span>عند الإكمال</span></div></div>' +
+      '<div class="detail-grid"><div>' +
+        '<div class="detail-card"><h3>🎯 المطلوب</h3><ul>' + c.req.map(function(x){return '<li>'+escapeHtml(x)+'</li>';}).join('') + '</ul></div>' +
+        '<div class="detail-card"><h3>🧠 المفاهيم المستخدمة</h3><p>' + escapeHtml(c.concepts) + '</p></div>' +
+        '<div class="detail-card hint-card"><h3>💡 Hint</h3><p>' + escapeHtml(c.hint) + '</p></div>' +
+      '</div><div>' +
+        '<div class="editor-card"><div class="editor-head"><span><i class="fa-solid fa-code"></i> Java Editor</span><button class="btn btn-ghost btn-sm" id="btnResetDraft">إعادة القالب</button></div><textarea id="practicalEditor" spellcheck="false">' + escapeHtml(draft) + '</textarea><div class="editor-foot"><span><i class="fa-solid fa-floppy-disk"></i> يتم حفظ المسودة تلقائيًا على جهازك</span><button class="btn btn-ghost btn-sm" id="btnSaveDraft">حفظ المسودة</button></div></div>' +
+        '<div class="reference-card"><div><h3>📖 Reference Solution</h3><p>استخدم الحل المرجعي بعد المحاولة، للمقارنة والتعلم وليس للحفظ.</p></div><button class="btn btn-ghost btn-sm" id="btnToggleSolution">عرض الحل</button><pre id="solutionBlock" hidden><code>' + escapeHtml(c.solution) + '</code></pre></div>' +
+        '<div class="completion-card ' + (done ? 'completed' : '') + '"><div><strong>' + (done ? 'تم إكمال هذا التحدي ✓' : 'أنهيت الحل؟') + '</strong><p>' + (done ? 'تم تسجيل التحدي ضمن تقدمك وحصلت على XP.' : 'راجع المتطلبات والحل المرجعي، ثم سجّل التحدي كمكتمل.') + '</p></div><button class="btn btn-primary" id="btnCompletePractical" ' + (done ? 'disabled' : '') + '>' + (done ? 'مكتمل ✓' : 'إكمال التحدي +50 XP') + '</button></div>' +
+      '</div></div></div>';
+  }
+  function attachPracticalChallengeEvents() {
+    const levelKey = state.currentLevel || "level1", i = state.currentPracticalIndex || 0;
+    const editor = qs('#practicalEditor');
+    const save = function(){ if(editor) savePracticalDraft(levelKey, i, editor.value); };
+    if(editor) editor.addEventListener('input', save);
+    const back = qs('#btnBackLab'); if(back) back.addEventListener('click', function(){ navigate('practical', {level:levelKey}); });
+    const saveBtn = qs('#btnSaveDraft'); if(saveBtn) saveBtn.addEventListener('click', function(){ save(); showToast('تم حفظ المسودة ✓'); });
+    const reset = qs('#btnResetDraft'); if(reset) reset.addEventListener('click', function(){ const c=getPracticalLab(levelKey)[i]; editor.value=c.starter; save(); });
+    const toggle = qs('#btnToggleSolution'); if(toggle) toggle.addEventListener('click', function(){ const block=qs('#solutionBlock'); const shown=!block.hidden; block.hidden=shown; toggle.textContent=shown?'عرض الحل':'إخفاء الحل'; });
+    const complete = qs('#btnCompletePractical'); if(complete) complete.addEventListener('click', function(){ save(); completePractical(levelKey, i); });
   }
 
   /* ------------------------------------------------------------------
@@ -796,11 +970,13 @@
           '<div class="dash-card"><div class="dash-num">' + overall.avgScore + '%</div><div class="dash-label">متوسط النتائج</div></div>' +
           '<div class="dash-card"><div class="dash-num">' + overall.bestScore + '%</div><div class="dash-label">أفضل نتيجة</div></div>' +
           '<div class="dash-card"><div class="dash-num">' + (p1.completed + p2.completed) + '</div><div class="dash-label">مواضيع منجزة</div></div>' +
+          '<div class="dash-card"><div class="dash-num">' + getAllPracticalCompleted() + '</div><div class="dash-label">تحديات عملية</div></div>' +
         '</div>' +
         '<div class="dash-progress-grid">' +
           '<div class="dash-progress-card"><h4>Java Level 1</h4><div class="progress-track"><div class="progress-fill" style="width:' + p1.percent + '%"></div></div><div class="progress-label">' + p1.percent + '% — ' + p1.completed + ' من ' + p1.total + ' مواضيع</div></div>' +
           '<div class="dash-progress-card"><h4>Java Level 2</h4><div class="progress-track"><div class="progress-fill" style="width:' + p2.percent + '%"></div></div><div class="progress-label">' + p2.percent + '% — ' + p2.completed + ' من ' + p2.total + ' مواضيع</div></div>' +
         '</div>' +
+        '<div class="practical-dash-grid"><div class="dash-progress-card"><h4>🛠️ Practical Lab — Level 1</h4><div class="progress-track"><div class="progress-fill" style="width:' + getPracticalProgress("level1").percent + '%"></div></div><div class="progress-label">' + getPracticalProgress("level1").completed + ' من ' + getPracticalProgress("level1").total + ' تحديات</div></div><div class="dash-progress-card"><h4>🛠️ Practical Lab — Level 2</h4><div class="progress-track"><div class="progress-fill" style="width:' + getPracticalProgress("level2").percent + '%"></div></div><div class="progress-label">' + getPracticalProgress("level2").completed + ' من ' + getPracticalProgress("level2").total + ' تحديات</div></div></div>' +
         '<div class="dashboard-section-head"><div><h2 class="section-title">الإنجازات</h2><p class="section-sub">افتح الشارات مع تقدّمك في المنصة.</p></div><span class="achievement-count">' + achievements.filter(function(a){return a.unlocked;}).length + ' / ' + achievements.length + '</span></div>' +
         '<div class="achievement-grid">' + achievementsHtml + '</div>' +
         '<h2 class="section-title">آخر المحاولات</h2>' +
@@ -833,7 +1009,7 @@
           '<div class="about-feature"><i class="fa-solid fa-layer-group" aria-hidden="true"></i><div><h5>مستويان متدرّجان</h5><p>من الأساسيات حتى المفاهيم المتقدمة في OOP</p></div></div>' +
           '<div class="about-feature"><i class="fa-solid fa-code" aria-hidden="true"></i><div><h5>أسئلة برمجية حقيقية</h5><p>قراءة كود، توقّع نتائج، واكتشاف الأخطاء</p></div></div>' +
           '<div class="about-feature"><i class="fa-solid fa-chart-simple" aria-hidden="true"></i><div><h5>تتبّع تقدّم فوري</h5><p>لوحة تحكم توضح أداءك في كل موضوع</p></div></div>' +
-          '<div class="about-feature"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i><div><h5>متوافقة مع الجوال</h5><p>تجربة سلسة على كل الأجهزة</p></div></div>' +
+          '<div class="about-feature"><i class="fa-solid fa-flask-vial" aria-hidden="true"></i><div><h5>Practical Lab</h5><p>تحديات ومشاريع عملية لتطبيق المفاهيم في كود حقيقي</p></div></div><div class="about-feature"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i><div><h5>متوافقة مع الجوال</h5><p>تجربة سلسة على كل الأجهزة</p></div></div>' +
         '</div>' +
       '</div>'
     );
